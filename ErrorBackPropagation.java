@@ -76,7 +76,6 @@ public class ErrorBackPropagation {
 			// The input for each neurons bias weight
 			final double bias = 1.0;  
 
-			
 			// Number of training sets
 			private  int numberOfTrainingSets;
 
@@ -147,10 +146,13 @@ public class ErrorBackPropagation {
 					for(j=0; j<layer[i].unitVec.length; j++)
 					{
 						sum = 0;
+						
 						for(k=0; k<layer[i+1].unitVec.length; k++)
 						{
 							sum = sum + layer[i+1].unitVec[k].weight[j]*layer[i+1].unitVec[k].signalError;
 						}
+						
+						layer[i].unitVec[j].signalError = layer[i].unitVec[j].output*(1-layer[i].unitVec[j].output)*sum;
 					}
 				}
 				
@@ -173,7 +175,6 @@ public class ErrorBackPropagation {
 						{
 							layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
 								
-							//update weight
 							layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
 						}
 					}
