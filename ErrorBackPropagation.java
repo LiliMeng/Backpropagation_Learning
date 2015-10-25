@@ -167,20 +167,13 @@ public class ErrorBackPropagation {
 				{
 					for(j=0; j<layer[i].unitVec.length; j++)
 					{
-						//calculate bias weight difference to unit j;
-						layer[i].unitVec[j].thresholdDiff = learningRate*layer[i].unitVec[j].signalError+ momentum*layer[i].unitVec[j].thresholdDiff;
-						
-						//update bias weight to node j
-						layer[i].unitVec[j].threshold = layer[i].unitVec[j].threshold + layer[i].unitVec[j].thresholdDiff;
-						
 						//update weights
 						
 						for(k=0; k<layer[i].inputVec.length; k++)
 						{
-							layer[i].unitVec[j].weightDiff[k] = learningRate* layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output
-									+momentum*layer[i].unitVec[j].weightDiff[k];
-							
-							//update weight between node j and k
+							layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
+								
+							//update weight
 							layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
 						}
 					}
@@ -244,6 +237,3 @@ public class ErrorBackPropagation {
 			}
 
 }
-
-
-
