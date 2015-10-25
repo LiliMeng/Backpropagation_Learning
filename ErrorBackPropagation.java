@@ -3,7 +3,7 @@ package EECEBP;
 public class ErrorBackPropagation {
 	   
 		//Constructor
-		public ErrorBackPropagation(int numOfUnits[],
+		public ErrorBackPropagation(int numOfUnitsInEachLayer[],
   				double totalTrainingInput[][],
   				double outputTrainingSets[][],
   				double learnRate,
@@ -11,52 +11,63 @@ public class ErrorBackPropagation {
   				double minimumError,
   				long maximumIterations)
 	   			{
-					int i, j;
 		   			numberOfTrainingSets = totalTrainingInput.length;
 		   			minError=minimumError;
 		   			learningRate = learnRate;
 		   			momentum = moment;
-		   			numberOfLayers = numOfUnits.length;
+		   			numberOfLayers = numOfUnitsInEachLayer.length;
 		   			maxIter = maximumIterations;
 
 		   			layer = new Layer[numberOfLayers];
 
-		   			//assign the number of node to the input layer
-		   			layer[0] = new Layer(numOfUnits[0], numOfUnits[0]);
+		   			//assign the number of units to the input layer
+		   			layer[0] = new Layer(numOfUnitsInEachLayer[0], numOfUnitsInEachLayer[0]);
 
-		   			//assign the number of node to each layer
-		   			for(i =1; i<numberOfLayers; i++)
+		   			//assign the number of units to each layer
+		   			for(int i =1; i<numberOfLayers; i++)
 		   			{
-		   				layer[i] = new Layer(numOfUnits[i],numOfUnits[i-1]);
+		   				layer[i] = new Layer(numOfUnitsInEachLayer[i],numOfUnitsInEachLayer[i-1]);
 		   			}
 
 		   			trainingInput = new double[numberOfTrainingSets][layer[0].unitVec.length];
-		   			expectedOutput = new double[numberOfTrainingSets][layer[numberOfLayers-1].unitVec.length];
-		   			actualOutput = new double[numberOfTrainingSets][layer[numberOfLayers-1].unitVec.length];
-
-		   			//Assign training set
-		   			for(i=0; i<numberOfTrainingSets; i++)
+		   			//Assign training set input to the trainingInput
+		   			for(int i=0; i<numberOfTrainingSets; i++)
 		   			{
-		   				for(j=0; j< layer[numberOfLayers-1].unitVec.length; j++)
+		   				for(int j=0; j<layer[0].unitVec.length; j++)
+		   				{
+		   					trainingInput[i][j]=totalTrainingInput[i][j];
+		   				}
+		   			}
+		   			
+		   			
+		   			expectedOutput = new double[numberOfTrainingSets][layer[numberOfLayers-1].unitVec.length];
+		   		
+		   			//Assign training set output to the expectedOutput
+		   			for(int i=0; i<numberOfTrainingSets; i++)
+		   			{
+		   				for(int j=0; j< layer[numberOfLayers-1].unitVec.length; j++)
 		   				{
 		   					expectedOutput[i][j]=outputTrainingSets[i][j];
 		   				}
 		   			}
-
+                   
+		   			actualOutput = new double[numberOfTrainingSets][layer[numberOfLayers-1].unitVec.length];
+		   			
 	   			} 
 	
-			private double	overallError=0;
+		    // Total error 
+			private double	totalError = 0;
 
 			//The minimum error defined by user. In this assignment, it's 0.05
 			private double	minError;
 			
 			// User defined learning rate - used for updating the network weights
-			private double	learningRate=0.2;
+			private double	learningRate;
 
-			// Users defined momentum - used for updating the network weights
+			// momentum - used for updating the network weights,  in assignment 1)a), momentum is 0, and the 1)c) momentum is 0.9
 			private double	momentum;
 
-			// Number of layers in the network - includes the input, output and hidden layers, in this assignment, 1 input layer, 4-hidden layer and 1 output layer
+			// Number of layers in the network - includes the input, output and hidden layers, in this assignment, 1 input layer, 1-hidden layer and 1 output layer
 			private  int	numberOfLayers;
 			
 			// Public Variables
@@ -72,8 +83,6 @@ public class ErrorBackPropagation {
 
 			// Maximum number of Epochs before the training stops training - user defined
 			private long maxIter;
-	        
-			
 			
 			//training set Input
 			private double[][] trainingInput;
@@ -85,10 +94,11 @@ public class ErrorBackPropagation {
 			private double[][] actualOutput;
 			private double output[];
 			
-			
-			// Calculate all the units feedFroward Propagation
-			public void feedForwardPropagation(){
+			boolean stopTraining = false;
 
+			// Calculate all the units feedFroward Propagation
+			public void feedForwardPropagation()
+			{
 				int i,j;
 				//for the layer 0, the input value is equal to output value
 				for(i=0; i<layer[0].unitVec.length; i++)
@@ -96,7 +106,7 @@ public class ErrorBackPropagation {
 					layer[0].unitVec[i].output = layer[0].inputVec[i];
 				}
 				
-				layer[1].inputVec=layer[0].inputVec;
+			   layer[0].outputVec=layer[0].inputVec; 
 				
 				for(i=1; i< numberOfLayers; i++)
 				{
@@ -177,16 +187,60 @@ public class ErrorBackPropagation {
 				}
 			}
 			
-			//calculateOverallError
-			private void calculateOverallError()
+			//calculateTotalError
+			private void calculateTotalError()
 			{
 				for(int i=0; i<numberOfTrainingSets; i++)
 				{
 					for(int j=0; j<layer[numberOfLayers-1].unitVec.length; j++)
 					{
-						overallError = overallError + 0.5*(Math.pow(expectedOutput[i][j]-actualOutput[i][j], 2));
+						totalError = totalError + 0.5*(Math.pow(expectedOutput[i][j]-actualOutput[i][j], 2));
 					}
 				}
+			}
+			
+			public void trainNeuralNetwork()
+			{
+				long iter=0;
+				
+				//Assign training set input to the trainingInput
+	   			for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
+	   			{
+	   				for(int i=0; i<layer[0].unitVec.length; i++)
+	   				{
+	   					layer[0].inputVec[i]=trainingInput[trainingsetNum][i];
+	   				}
+	   			
+	   			    feedForwardPropagation();
+	   			
+	   			    //Assign calculated output vector from neural network to actualOutput
+	   			    for(int i=0; i<layer[numberOfLayers-1].unitVec.length; i++)
+	   			    {
+	   			    	actualOutput[trainingsetNum][i]=layer[numberOfLayers-1].unitVec[i].output;
+	   			    }
+	   			    
+	   			    updateWeights();
+	   			    
+	   			}
+	   			iter++;
+	   			calculateTotalError();
+				
+	   			while (totalError > minError) 
+	   			{
+	   				System.out.println("We have reached the minError!");
+	   			}
+				
+			}
+			
+			// Run BP
+			public void runBP() {
+				trainNeuralNetwork();
+			} 
+
+			// to notify the network to stop training.
+			public void kill() 
+			{ 
+				stopTraining = true; 
 			}
 
 }
