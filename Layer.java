@@ -37,9 +37,10 @@ public class Layer {
     		
     		for(int j=0; j<unitVec[i].weight.length; j++)
     		{
-    			value = value + inputVec[j]*unitVec[i].weight[j]+bias;
+    			value = value + inputVec[j]*unitVec[i].weight[j];
     		}
     		
+    		value = value + bias;
     		unitVec[i].output = binarySigmoid(value);
     	}
     	
