@@ -18,7 +18,7 @@ public class Main {
 		long maxIterations = 10000;
 	 
 	    ErrorBackPropagation BP;
-	    BP(numberOfUnits, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError, maxIterations);
-	    
+	    BP(numberOfUnits, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError, maxIterations).calculateOverallError;
+	
 	}
 }
