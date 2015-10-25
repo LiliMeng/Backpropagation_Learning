@@ -8,16 +8,13 @@ public class ErrorBackPropagation {
   				double outputTrainingSets[][],
   				double learnRate,
   				double moment,
-  				double minimumError,
-  				long maximumIterations)
+  				double minimumError)
 	   			{
 		   			numberOfTrainingSets = totalTrainingInput.length;
 		   			minError=minimumError;
 		   			learningRate = learnRate;
 		   			momentum = moment;
 		   			numberOfLayers = numOfUnitsInEachLayer.length;
-		   			maxIter = maximumIterations;
-
 		   			layer = new Layer[numberOfLayers];
 
 		   			//assign the number of units to the input layer
@@ -56,10 +53,10 @@ public class ErrorBackPropagation {
 	   			} 
 	
 		    // Total error 
-			private double	totalError = 0;
+			public double	totalError;
 
 			//The minimum error defined by user. In this assignment, it's 0.05
-			private double	minError;
+			public double	minError;
 			
 			// User defined learning rate - used for updating the network weights
 			private double	learningRate;
@@ -78,10 +75,6 @@ public class ErrorBackPropagation {
 
 			// Number of training sets
 			private  int numberOfTrainingSets;
-
-
-			// Maximum number of Epochs before the training stops training - user defined
-			private long maxIter;
 			
 			//training set Input
 			private double[][] trainingInput;
@@ -98,16 +91,15 @@ public class ErrorBackPropagation {
 			// Calculate all the units feedFroward Propagation
 			public void feedForwardPropagation()
 			{
-				int i,j;
 				//for the layer 0, the input value is equal to output value
-				for(i=0; i<layer[0].unitVec.length; i++)
+				for(int j=0; j<layer[0].unitVec.length; j++)
 				{
-					layer[0].unitVec[i].output = layer[0].inputVec[i];
+					layer[0].unitVec[j].output = layer[0].inputVec[j];
 				}
 				
 			   layer[0].outputVec=layer[0].inputVec; 
 				
-				for(i=1; i< numberOfLayers; i++)
+				for(int i=1; i< numberOfLayers; i++)
 				{
 					layer[i].feedForward();
 					
@@ -116,6 +108,7 @@ public class ErrorBackPropagation {
 						layer[i+1].inputVec = layer[i].outputVector();
 					}
 				}
+				
 			} 
 			
 			//update the weights 
@@ -169,6 +162,14 @@ public class ErrorBackPropagation {
 				{
 					for(j=0; j<layer[i].unitVec.length; j++)
 					{
+						// Calculate Bias weight difference to unitVec j
+						layer[i].unitVec[j].biasDiff 
+							= momentum*layer[i].unitVec[j].biasDiff+learningRate * layer[i].unitVec[j].signalError;
+						
+						//update bias weight to unitVec j
+						layer[i].unitVec[j].bias
+						=layer[i].unitVec[j].bias+layer[i].unitVec[j].biasDiff;
+
 						//update weights
 						
 						for(k=0; k<layer[i].inputVec.length; k++)
@@ -219,9 +220,10 @@ public class ErrorBackPropagation {
 	   			iter++;
 	   			calculateTotalError();
 				
-	   			while (totalError > minError) 
+	   			if (totalError < minError) 
 	   			{
-	   				System.out.println("We have reached the minError!");
+	   				System.out.println("When we have reached the minError, the iteration is" + iter);
+	  
 	   			}
 				
 			}
@@ -235,6 +237,27 @@ public class ErrorBackPropagation {
 			public void kill() 
 			{ 
 				stopTraining = true; 
+			}
+			
+			public static void main(String[] args)
+			{
+				int numOfUnitsInEachLayer[]= {2,4,1};
+				
+				//XOR training input
+				double totalTrainingInput[][] = { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } };
+				
+				//XOR training output
+				double outputTrainingSets[][] ={{0},{1},{1},{0}};
+				
+				double learningRate= 0.2;
+				
+				double momentum= 0.9;
+				
+				double minimumError = 0.05;
+			 
+			    ErrorBackPropagation  BP = new ErrorBackPropagation(numOfUnitsInEachLayer, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError);
+			    BP.runBP();
+			    
 			}
 
 }
