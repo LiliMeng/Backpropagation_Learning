@@ -14,9 +14,12 @@ public class Layer {
 		inputVec = new double[numberOfInputs];
 	}
 	
-	//vector of inputs signals from previous layer to the current layer
+	//vector of input signals from previous layer to the current layer
     public double inputVec[];
-    		
+    
+    //vector of output signals from the current layer
+    public double outputVec[];
+    
     //vector of units in current layer
     public Unit unitVec[];
     
@@ -63,8 +66,6 @@ public class Layer {
    //Return the output from all node in the layer in a vector form
 	public double[] outputVector()
 	{
-		double outputVec[];
-		
 		outputVec = new double[unitVec.length];
 		
 		for(int i=0; i<unitVec.length; i++)
