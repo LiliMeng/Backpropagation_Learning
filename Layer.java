@@ -25,6 +25,9 @@ public class Layer {
     
     private double value; 
     
+	// The input for each neurons bias weight
+	final double bias = 1.0;
+    
 	//The feedForward propagation
     public void feedForward()
     {
@@ -34,7 +37,7 @@ public class Layer {
     		
     		for(int j=0; j<unitVec[i].weight.length; j++)
     		{
-    			value = value + inputVec[j]*unitVec[i].weight[j];
+    			value = value + inputVec[j]*unitVec[i].weight[j]+bias;
     		}
     		
     		unitVec[i].output = binarySigmoid(value);
