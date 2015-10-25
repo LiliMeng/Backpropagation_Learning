@@ -2,7 +2,7 @@ package EECEBP;
 
 public class Main {
 
-	public static void main()
+	public static void main(String[] args)
 	{
 		int numOfUnitsInEachLayer[]= {2,4,1};
 		
@@ -10,7 +10,7 @@ public class Main {
 		double totalTrainingInput[][] = { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } };
 		
 		//XOR training output
-		double outputTrainingSets[][] ={{0},{1},{1},{1}};
+		double outputTrainingSets[][] ={{0},{1},{1},{0}};
 		
 		double learningRate= 0.2;
 		double momentum= 0.0;
