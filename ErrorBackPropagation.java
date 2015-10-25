@@ -135,7 +135,7 @@ public class ErrorBackPropagation {
 				
 				int outputLayer = numberOfLayers - 1;
 				
-				//calculate all output signal error
+				//calculate output signal error
 				for(i=0; i<layer[outputLayer].unitVec.length; i++)
 				{
 					layer[outputLayer].unitVec[i].signalError=layer[outputLayer].unitVec[i].output*(1-layer[outputLayer].unitVec[i].output)*(expectedOutput[outputLayer][i]-layer[outputLayer].unitVec[i].output);
@@ -244,3 +244,6 @@ public class ErrorBackPropagation {
 			}
 
 }
+
+
+
