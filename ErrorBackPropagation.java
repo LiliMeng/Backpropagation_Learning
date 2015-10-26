@@ -8,14 +8,17 @@ public class ErrorBackPropagation {
   				double outputTrainingSets[][],
   				double learnRate,
   				double moment,
-  				double minimumError)
+  				double minimumError,
+  				long maxIteration)
 	   			{
 		   			numberOfTrainingSets = totalTrainingInput.length;
 		   			minError=minimumError;
 		   			learningRate = learnRate;
 		   			momentum = moment;
 		   			numberOfLayers = numOfUnitsInEachLayer.length;
+		   			maxIter = maxIteration;
 		   			layer = new Layer[numberOfLayers];
+		   			
 
 		   			//assign the number of units to the input layer
 		   			layer[0] = new Layer(numOfUnitsInEachLayer[0], numOfUnitsInEachLayer[0]);
@@ -87,6 +90,7 @@ public class ErrorBackPropagation {
 			private double output[];
 			
 			boolean stopTraining = false;
+			long maxIter;
 
 			// Calculate all the units feedFroward Propagation
 			public void feedForwardPropagation()
@@ -196,9 +200,10 @@ public class ErrorBackPropagation {
 			
 			public void trainNeuralNetwork()
 			{
-				long iter=0;
+				long iter;
 				
-				//Assign training set input to the trainingInput
+				for(iter=0; iter<maxIter&&totalError>minError; iter++)
+				{//Assign training set input to the trainingInput
 	   			for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
 	   			{
 	   				for(int i=0; i<layer[0].unitVec.length; i++)
@@ -220,19 +225,12 @@ public class ErrorBackPropagation {
 	  
 	   			calculateTotalError();
 	   			
-				
-	   			if (totalError < minError) 
-	   			{
-	   				System.out.println("When we have reached the minError, the iteration is " + iter);
-	   				return;
-	  
-	   			}
-	   			else
-	   			{
-	   				iter++;
-	   				System.out.println("iteration is increasing " +iter);
-	   			}
+	   			iter++;
 	   			
+				}
+				
+				System.out.println("When we have reached the minError, the iteration is " + iter);
+				
 			}
 			
 			// Run BP
@@ -261,13 +259,14 @@ public class ErrorBackPropagation {
 				double momentum= 0.9;
 				
 				double minimumError = 0.05;
+				
+				long maxIteration=10000;
 			 
-			    ErrorBackPropagation  BP = new ErrorBackPropagation(numOfUnitsInEachLayer, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError);
+			    ErrorBackPropagation  BP = new ErrorBackPropagation(numOfUnitsInEachLayer, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError, maxIteration);
 			    BP.runBP();
 			    
 			}
 
 }
-
 
 
