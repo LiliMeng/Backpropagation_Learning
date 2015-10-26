@@ -21,27 +21,32 @@ public class Unit {
 	    //vector of weights from previous units to current unit
 	    public double weight[];
 
-		//unit threshold / bias
-	    public double threshold;
+		//unit bias
+	    public double bias = 1.0;
+	    
+	    //unit bias weight
+	    public double biasWeight;
 
         //weight difference between the (n-1)th and nth iteration
 	    public double weightDiff[];
 
-		//threshold difference between the (n-1)th and nth iteration
-	    public double thresholdDiff;
+		//bias difference between the (n-1)th and nth iteration
+	    public double biasDiff;
 	    
 	    //Output signal error
 	    public double signalError;
 
-        //Initialize weights to random values in the range -0.5 to +0.5
+        //Initialize both bias and unit weights to random values in the range -0.5 to +0.5
 	    private void initializeWeights(){
 	    	
-	    	//Initialize threshold units with a random number between -0.5 and 0.5
-	    	threshold = 0.5*(-1+2*Math.random());
+	    	//Initialize the bias units with a random number between -0.5 and 0.5
+	    	biasWeight = 0.5*(-1+2*Math.random());
+	    	
+	    	bias=bias*biasWeight;
 	    	
 	    	//Initially, thresholdDiff is assigned to 0 so that the momentum term
 	    	//can work during the 1st iteration
-	    	thresholdDiff = 0;
+	    	biasDiff = 0;
 	    	
 	    	for(int i=0; i<weight.length; i++)
 	    	{
@@ -54,4 +59,5 @@ public class Unit {
 	    	}  			
 	    }
 };
+
 
