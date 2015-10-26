@@ -53,7 +53,7 @@ public class ErrorBackPropagation {
 	   			} 
 	
 		    // Total error 
-			public double	totalError;
+			public double	totalError=0;
 
 			//The minimum error defined by user. In this assignment, it's 0.05
 			public double	minError;
@@ -103,7 +103,7 @@ public class ErrorBackPropagation {
 				{
 					layer[i].feedForward();
 					
-					if(i!=numberOfLayers-1)
+					if(i!=(numberOfLayers-1))
 					{
 						layer[i+1].inputVec = layer[i].outputVector();
 					}
@@ -133,24 +133,24 @@ public class ErrorBackPropagation {
 					layer[outputLayer].unitVec[i].signalError=layer[outputLayer].unitVec[i].output*(1-layer[outputLayer].unitVec[i].output)*(expectedOutput[outputLayer][i]-layer[outputLayer].unitVec[i].output);
 				}
 				
-			    //calculate signal error for all units in the hidden layer 
+			    //calculate signal error for all units in the hidden layer
 				for(i=numberOfLayers-2; i>0; i--)
 				{
 					for(j=0; j<layer[i].unitVec.length; j++)
 					{
 						sum = 0;
 						
-						for(k=0; k<layer[i+1].unitVec.length; k++)
+						for(k=0; k<layer[i+1].unitVec.length; k++)    // i=0
 						{
 							sum = sum + layer[i+1].unitVec[k].weight[j]*layer[i+1].unitVec[k].signalError;
 						}
 						
+						//for hidden layer units, the error signal is the weighted sum of the errors at the units above
 						layer[i].unitVec[j].signalError = layer[i].unitVec[j].output*(1-layer[i].unitVec[j].output)*sum;
 					}
 				}
 				
 			}
-
 			
 			//calculate backPropoagationError
 			private void backPropagationError()
@@ -158,11 +158,11 @@ public class ErrorBackPropagation {
 				int i, j, k;
 				
 				//update weights
-				for(i = numberOfLayers - 1; i>0; i--)
+				for(i = numberOfLayers - 1; i > 0; i--)
 				{
 					for(j=0; j<layer[i].unitVec.length; j++)
 					{
-						// Calculate Bias weight difference to unitVec j
+						// Calculate Bias difference to unitVec j
 						layer[i].unitVec[j].biasDiff 
 							= momentum*layer[i].unitVec[j].biasDiff+learningRate * layer[i].unitVec[j].signalError;
 						
@@ -217,15 +217,22 @@ public class ErrorBackPropagation {
 	   			    updateWeights();
 	   			    
 	   			}
-	   			iter++;
+	  
 	   			calculateTotalError();
+	   			
 				
 	   			if (totalError < minError) 
 	   			{
-	   				System.out.println("When we have reached the minError, the iteration is" + iter);
+	   				System.out.println("When we have reached the minError, the iteration is " + iter);
+	   				return;
 	  
 	   			}
-				
+	   			else
+	   			{
+	   				iter++;
+	   				System.out.println("iteration is increasing " +iter);
+	   			}
+	   			
 			}
 			
 			// Run BP
@@ -261,3 +268,6 @@ public class ErrorBackPropagation {
 			}
 
 }
+
+
+
