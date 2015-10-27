@@ -1,8 +1,8 @@
 # Backpropagation_Learning
 Backpropagation learning using Java
-Robocode Project Assignment1 from University of British Columbia EECE592 (https://courses.ece.ubc.ca/592/EECE592_WebSite_2009/Welcome.html)
+Assignment1 from University of British Columbia EECE592 Architectures for Learning System (https://courses.ece.ubc.ca/592/EECE592_WebSite_2009/Welcome.html)
 
-implement a multi-layer perceptron and train it using the error-backpropagation algorithm. 
+Implement a multi-layer perceptron and train it using the error-backpropagation algorithm. 
 
 For details:
 
