@@ -6,14 +6,27 @@ public class Layer {
 	{   
 		unitVec = new Unit[numberOfUnits];
 		
-		for(int i =0; i< numberOfUnits; i++)
+		for(int i = 0; i< numberOfUnits; i++)
 		{
-			//numberOfInputs for the usual input, and 1 for bias term
+			//numberOfInputs for the usual input
 			unitVec[i] = new Unit(numberOfInputs);
-		}
-		
+		}	
 		
 		inputVec = new double[numberOfInputs];
+		
+		valueVec = new double[numberOfUnits];
+		
+		for(int i = 0; i< numberOfUnits; i++)
+		{
+			//numberOfInputs for the usual input
+			valueVec[i] =0;
+		}	
+		
+		
+		outputVec = new double[numberOfUnits];
+		
+		initializeBiasWeight();
+		
 	}
 	
 	//vector of input signals from previous layer to the current layer
@@ -25,31 +38,55 @@ public class Layer {
     //vector of units in current layer
     public Unit unitVec[];
     
-    private double value; 
+    public double valueVec[]; 
     
-      
+	//unit bias
+    public double bias;
+    
+    //unit bias weight
+    public double biasWeight;
+    
+	//bias weight difference between the (n-1)th and nth iteration
+    public double biasWeightDiff;
+    
+    public void initializeBiasWeight(){
+    	
+    	//Initialize the bias units with a random number between -0.5 and 0.5
+    	biasWeight = Math.random()-0.5;
+    	
+    	//Initially, biasDiff is assigned to 0 so that the momentum term
+    	//can work during the 1st iteration
+    	biasWeightDiff = 0;
+    	
+    }
+	
 	//The feedForward propagation
     public void feedForward()
     {
     	for(int i=0; i<unitVec.length; i++)
     	{
-    		value = unitVec[i].bias;
     		
     		for(int j=0; j<unitVec[i].weight.length; j++)
     		{
-    			value = value + inputVec[j]*unitVec[i].weight[j];
+    			//System.out.printf("inputVec[i]*unitVec[i].weight[j]:%f,%f\n",inputVec[j],unitVec[i].weight[j]);
+    			valueVec[i] = valueVec[i] + inputVec[j]*unitVec[i].weight[j];
+    			
+    			//System.out.printf("inputVec[i]*unitVec[i].weight[j]:%f,%f\n",inputVec[j],unitVec[i].weight[j]);
     		}
-    		  		
-    		unitVec[i].output = binarySigmoid(value);
+    		
+    		valueVec[i] = valueVec[i] + bias*biasWeight;
+    		
+    		unitVec[i].output = binarySigmoid(valueVec[i]);
+    		
+    		outputVec[i]=unitVec[i].output;
     	}
-    	
     }
 
     
     /**
 	 * Return a binary sigmoid of the input X
 	 * @param x The input
-	 * @return f(x) = 2 / (1+e(-x)) -1
+	 * @return f(x) = 1 / (1+e(-x)) 
 	 */
 	public double binarySigmoid(double x)
 	{
@@ -64,19 +101,6 @@ public class Layer {
 	public double bipolarSigmoid(double x)
 	{
 		return 2/(1+Math.exp(-x))-1;
-	}
-	
-   //Return the output from all node in the layer in a vector form
-	public double[] outputVector()
-	{
-		outputVec = new double[unitVec.length];
-		
-		for(int i=0; i<unitVec.length; i++)
-		{
-			outputVec[i]=unitVec[i].output;
-		}
-		
-		return (outputVec);
 	}
 
 }
