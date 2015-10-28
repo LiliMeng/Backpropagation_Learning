@@ -171,7 +171,7 @@ public class ErrorBackPropagation {
 						for(int k=0; k<layer[i].inputVec.length; k++)
 						{
 							//System.out.printf("layer[%d].unitVec[%d].weight[%d]%f before update\n",i,j,k,layer[i].unitVec[j].weight[k]);
-							this.layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
+							this.layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i].inputVec[k];
 						
 							//System.out.printf("layer[%d].unitVec[%d].output%f before update\n",i,j,layer[i-1].unitVec[k].output);
 							this.layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
@@ -208,7 +208,7 @@ public class ErrorBackPropagation {
 			{
 				long iter;
 				
-				for(iter=0; iter<100; iter++)
+				for(iter=0; iter<10; iter++)
 				{//Assign training set input to the trainingInput
 					for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
 					{
@@ -276,4 +276,3 @@ public class ErrorBackPropagation {
 			}
 
 }
-
