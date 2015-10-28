@@ -66,7 +66,7 @@ public class Layer {
     	for(int i=0; i<unitVec.length; i++)
     	{
     		
-    		for(int j=0; j<unitVec[i].weight.length; j++)
+    		for(int j=0; j<inputVec.length; j++)
     		{
     			//System.out.printf("inputVec[i]*unitVec[i].weight[j]:%f,%f\n",inputVec[j],unitVec[i].weight[j]);
     			valueVec[i] = valueVec[i] + inputVec[j]*unitVec[i].weight[j];
@@ -77,8 +77,10 @@ public class Layer {
     		valueVec[i] = valueVec[i] + bias*biasWeight;
     		
     		unitVec[i].output = binarySigmoid(valueVec[i]);
+    
     		
     		outputVec[i]=unitVec[i].output;
+    		//System.out.printf("unitVec[%d].output %f\n", i, outputVec[i]);
     	}
     }
 
@@ -104,3 +106,4 @@ public class Layer {
 	}
 
 }
+
