@@ -1,8 +1,7 @@
 package EECEBP;
 
 public class ErrorBackPropagation {
-	   
-		//Constructor
+	   	//Constructor
 		public ErrorBackPropagation(int numOfUnitsInEachLayer[],
   				double totalTrainingInput[][],
   				double outputTrainingSets[][],
@@ -12,14 +11,13 @@ public class ErrorBackPropagation {
   				long maxIteration)
 	   			{
 		   			numberOfTrainingSets = totalTrainingInput.length;
-		   			minError=minimumError;
+		   			minError = minimumError;
 		   			learningRate = learnRate;
 		   			momentum = moment;
 		   			numberOfLayers = numOfUnitsInEachLayer.length;
 		   			maxIter = maxIteration;
 		   			layer = new Layer[numberOfLayers];
-		   			
-
+		   		
 		   			//assign the number of units to the input layer
 		   			layer[0] = new Layer(numOfUnitsInEachLayer[0], numOfUnitsInEachLayer[0]);
 
@@ -28,15 +26,16 @@ public class ErrorBackPropagation {
 		   			{
 		   				layer[i] = new Layer(numOfUnitsInEachLayer[i],numOfUnitsInEachLayer[i-1]);
 		   			}
-
+		   			
 		   			trainingInput = new double[numberOfTrainingSets][layer[0].unitVec.length];
 		   			
 		   			//Assign training set input to the trainingInput
-		   			for(int i=0; i<numberOfTrainingSets; i++)
+		   			for(int numberOfTrainingSetIndex=0; numberOfTrainingSetIndex<numberOfTrainingSets; numberOfTrainingSetIndex++)
 		   			{
 		   				for(int j=0; j<layer[0].unitVec.length; j++)
 		   				{
-		   					trainingInput[i][j]=totalTrainingInput[i][j];
+		   					trainingInput[numberOfTrainingSetIndex][j]=totalTrainingInput[numberOfTrainingSetIndex][j];
+		   					
 		   				}
 		   			}
 		   			
@@ -44,11 +43,12 @@ public class ErrorBackPropagation {
 		   			expectedOutput = new double[numberOfTrainingSets][layer[numberOfLayers-1].unitVec.length];
 		   		
 		   			//Assign training set output to the expectedOutput
-		   			for(int i=0; i<numberOfTrainingSets; i++)
+		   			for(int trainingSetIndex=0;  trainingSetIndex<numberOfTrainingSets;  trainingSetIndex++)
 		   			{
 		   				for(int j=0; j< layer[numberOfLayers-1].unitVec.length; j++)
 		   				{
-		   					expectedOutput[i][j]=outputTrainingSets[i][j];
+		   					expectedOutput[trainingSetIndex][j]=outputTrainingSets[trainingSetIndex][j];
+//		   					System.out.printf("Expected output onlyiiii: %f\n",expectedOutput[trainingSetIndex][j]);
 		   				}
 		   			}
                    
@@ -88,7 +88,6 @@ public class ErrorBackPropagation {
 			
 			//Output Initialization
 			private double[][] actualOutput;
-			private double output[];
 			
 			boolean stopTraining = false;
 			long maxIter;
@@ -100,52 +99,76 @@ public class ErrorBackPropagation {
 				for(int j=0; j<layer[0].unitVec.length; j++)
 				{
 					layer[0].unitVec[j].output = layer[0].inputVec[j];
+					layer[0].outputVec[j]=layer[0].inputVec[j];
+					//System.out.println("layer[0]inputvec midddle " +j+" "+layer[0].inputVec[j]);
 				}
 				
-			   layer[0].outputVec=layer[0].inputVec; 
+				//System.out.println("+++++++0");
+				//
 				
-				for(int i=1; i< numberOfLayers; i++)
+				for(int i=0; i< numberOfLayers-1; i++)
 				{
-					layer[i].feedForward();
-					
-					if(i!=(numberOfLayers-1))
+					for(int j=0; j<layer[i].outputVec.length; j++)
 					{
-						layer[i+1].inputVec = layer[i].outputVector();
+						layer[i+1].inputVec[j] = layer[i].outputVec[j];
 					}
+					
+					System.out.println("+++++++"+i);
+					layer[i+1].feedForward();
+					
 				}
+				
+				
+				/*System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weight[0]);
+				System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weight[1]);
+				System.out.printf("layer[1].unitVec[1].weight[0]: %f \n",layer[1].unitVec[1].weight[0]);
+				System.out.printf("layer[1].unitVec[1].weight[1]: %f \n",layer[1].unitVec[1].weight[1]);
+				System.out.printf("layer[1].unitVec[2].weight[0]: %f \n",layer[1].unitVec[2].weight[0]);
+				System.out.printf("layer[1].unitVec[2].weight[1]: %f \n",layer[1].unitVec[2].weight[1]);
+				System.out.printf("layer[1].unitVec[3].weight[0]: %f \n",layer[1].unitVec[3].weight[0]);
+				System.out.printf("layer[1].unitVec[3].weight[1]: %f \n",layer[1].unitVec[3].weight[1]);
+				*/
 				
 			} 
 			
 			//update the weights 
-			public void updateWeights()
+			public void updateWeights(int idx)
 			{
-				calculateSignalErrors();
+				calculateSignalErrors(idx);
 				backPropagationError();
 			}
 			
 			
 			//calculate signal errors
-			private void calculateSignalErrors()
+			private void calculateSignalErrors(int idx)
 			{
-				int i, j, k;
+				
 				double sum;
 				
 				int outputLayer = numberOfLayers - 1;
-				
+				//System.out.println("outputLayer "+outputLayer);
+//				for(int i=0; i<numberOfTrainingSets; i++)
+//	   			{
+//	   				for(int j=0; j< layer[numberOfLayers-1].unitVec.length; j++)
+//	   				{
+//	   					System.out.printf("Expected output only: %f\n",expectedOutput[i][j]);
+//	   				}
+//	   			}
 				//calculate output signal error
-				for(i=0; i<layer[outputLayer].unitVec.length; i++)
+				for(int i=0; i<layer[outputLayer].unitVec.length; i++)
 				{
-					layer[outputLayer].unitVec[i].signalError=layer[outputLayer].unitVec[i].output*(1-layer[outputLayer].unitVec[i].output)*(expectedOutput[outputLayer][i]-layer[outputLayer].unitVec[i].output);
+					layer[outputLayer].unitVec[i].signalError=layer[outputLayer].unitVec[i].output*(1-layer[outputLayer].unitVec[i].output)*(expectedOutput[idx][i]-layer[outputLayer].unitVec[i].output);
+//					System.out.printf("error: %f\n ",expectedOutput[idx][i]-layer[outputLayer].unitVec[i].output);
 				}
 				
 			    //calculate signal error for all units in the hidden layer
-				for(i=numberOfLayers-2; i>0; i--)
+				for(int i=numberOfLayers-2; i>0; i--)
 				{
-					for(j=0; j<layer[i].unitVec.length; j++)
+					for(int j=0; j<layer[i].unitVec.length; j++)
 					{
 						sum = 0;
 						
-						for(k=0; k<layer[i+1].unitVec.length; k++)    // i=0
+						for(int k=0; k<layer[i+1].unitVec.length; k++)    // i=0
 						{
 							sum = sum + layer[i+1].unitVec[k].weight[j]*layer[i+1].unitVec[k].signalError;
 						}
@@ -160,29 +183,33 @@ public class ErrorBackPropagation {
 			//calculate backPropoagationError
 			private void backPropagationError()
 			{
-				int i, j, k;
-				
 				//update weights
-				for(i = numberOfLayers - 1; i > 0; i--)
+				for(int i = numberOfLayers - 1; i > 0; i--)
 				{
-					for(j=0; j<layer[i].unitVec.length; j++)
+					for(int j=0; j<layer[i].unitVec.length; j++)
 					{
-						// Calculate Bias difference to unitVec j
-						layer[i].unitVec[j].biasDiff 
-							= momentum*layer[i].unitVec[j].biasDiff+learningRate * layer[i].unitVec[j].signalError;
-						
-						//update bias weight to unitVec j
-						layer[i].unitVec[j].bias
-						=layer[i].unitVec[j].bias+layer[i].unitVec[j].biasDiff;
-
 						//update weights
 						
-						for(k=0; k<layer[i].inputVec.length; k++)
+						//System.out.printf("layer[1].unitVec[0].weight[0]: %f middle before\n",this.layer[1].unitVec[0].weight[0]);
+						for(int k=0; k<layer[i].inputVec.length; k++)
 						{
-							layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
-								
-							layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
+							//System.out.printf("layer[%d].unitVec[%d].weight[%d]%f before update\n",i,j,k,layer[i].unitVec[j].weight[k]);
+							this.layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
+							System.out.printf("layer[%d].unitVec[%d].output%f before update\n",i,j,layer[i-1].unitVec[k].output);
+							this.layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
+							//System.out.printf("layer[%d].unitVec[%d].weight[%d]%f after update111\n",i,j,k,layer[1].unitVec[0].weight[0]);
+							
 						}
+						
+						//System.out.printf("layer[1].unitVec[0].weight[0]: %f middle after\n",this.layer[1].unitVec[0].weight[0]);
+						
+						// Calculate Bias difference 
+						layer[i].biasWeightDiff 
+							= momentum*layer[i].biasWeightDiff+learningRate * layer[i].unitVec[j].signalError*bias;
+						
+						//update bias weight for unitVec j
+						layer[i].biasWeight = layer[i].biasWeight+layer[i].biasWeightDiff;
+
 					}
 				}
 			}
@@ -203,6 +230,7 @@ public class ErrorBackPropagation {
 			public void trainNeuralNetwork()
 			{
 				long iter;
+				
 				for(iter=0; iter<1; iter++)
 				{//Assign training set input to the trainingInput
 					for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
@@ -214,62 +242,38 @@ public class ErrorBackPropagation {
 						}
 	   			
 						feedForwardPropagation();
-	   			       
-						//经过了feedForfrowardPropagation太大了
-						//Assign calculated output vector from neural network to actualOutput
-						for(int i=0; i<layer[numberOfLayers-1].unitVec.length; i++)
-						{
-							actualOutput[trainingsetNum][i]=layer[numberOfLayers-1].unitVec[i].output;
-						   // System.out.println("actualOutput  "+trainingsetNum+ " "+i+" "+ actualOutput[trainingsetNum][i]);
-						}
-	   			    
-						updateWeights();
-						//System.out.println("updateWeights");
-					}
-	  
-					calculateTotalError();
-					//System.out.println("totalError is "+totalError);
+						
+						
+						//System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weight[0]);
+						//System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weight[1]);
+						//System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weightDiff[0]);
+						//System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weightDiff[1]);
+						
 					
-			}
-	   			/*
-				
-				for(iter=1; totalError>minError; iter++)
-				{//Assign training set input to the trainingInput
-					for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
-					{
-						for(int i=0; i<layer[0].unitVec.length; i++)
-						{
-							layer[0].inputVec[i]=trainingInput[trainingsetNum][i];
-						}
-	   			
-						feedForwardPropagation();
-	   			
+						
+	   			       
 						//Assign calculated output vector from neural network to actualOutput
 						for(int i=0; i<layer[numberOfLayers-1].unitVec.length; i++)
 						{
 							actualOutput[trainingsetNum][i]=layer[numberOfLayers-1].unitVec[i].output;
-						   // System.out.println("actualOutput  "+trainingsetNum+ " "+i+" "+ actualOutput[trainingsetNum][i]);
+						  // System.out.println("actualOutput  "+trainingsetNum+ " "+i+" "+ actualOutput[trainingsetNum][i]);
 						}
 	   			    
-						updateWeights();
-						//System.out.println("updateWeights");
+						//System.out.printf("layer[1].unitVec[0].weight[0]: %f before\n",layer[1].unitVec[0].weight[0]);
+						//System.out.printf("layer[1].unitVec[0].weight[1]: %f before \n",layer[1].unitVec[0].weight[1]);
+						
+						updateWeights(trainingsetNum);
+						
 					}
 	  
 					calculateTotalError();
-					System.out.println("totalError"+ totalError);
-	   			
-				}*/
-				
-				
-				
+					System.out.println("totalError is "+totalError);
+									
 				//System.out.println("When we have reached the minError, the iteration is " + iter);
 				
 			}
+		}
 			
-			// Run BP
-			public void runBP() {
-				trainNeuralNetwork();
-			} 
 
 			// to notify the network to stop training.
 			public void kill() 
@@ -289,7 +293,7 @@ public class ErrorBackPropagation {
 				
 				double learningRate= 0.2;
 				
-				double momentum= 0.9;
+				double momentum= 0;
 				
 				double minimumError = 0.05;
 				
@@ -297,31 +301,8 @@ public class ErrorBackPropagation {
 			 
 			    ErrorBackPropagation  BP = new ErrorBackPropagation(numOfUnitsInEachLayer, totalTrainingInput, outputTrainingSets,learningRate, momentum, minimumError, maxIteration);
 			    
-			    //System.out.println("minError" + BP.minError);
-			    System.out.println("expectedOutput0 " + BP.expectedOutput[0][0]);
-			    System.out.println("expectedOutput1 " + BP.expectedOutput[1][0]);
-			    System.out.println("expectedOutput2 " + BP.expectedOutput[2][0]);
-			    System.out.println("expectedOutput3 " + BP.expectedOutput[3][0]);
-			  /*  
-			    System.out.println("totalError " + BP.totalError);
-			    
-			    System.out.println("trainingInput[0][0] "+ BP.trainingInput[0][0]);
-			    System.out.println("trainingInput[0][1] "+ BP.trainingInput[0][1]);
-			    System.out.println("trainingInput[1][0] "+ BP.trainingInput[1][0]);
-			    System.out.println("trainingInput[1][1] "+ BP.trainingInput[1][1]);
-			    System.out.println("trainingInput[2][0] "+ BP.trainingInput[2][0]);
-			    System.out.println("trainingInput[2][1] "+ BP.trainingInput[2][1]);
-			    System.out.println("trainingInput[3][0] "+ BP.trainingInput[3][0]);
-			    System.out.println("trainingInput[3][1] "+ BP.trainingInput[3][1]);
-			 
-			    
-			    System.out.println("ActualOutput[0][0] "+ BP.actualOutput[0][0]);
-			    System.out.println("ActualOutput[1][0] "+ BP.actualOutput[1][0]);
-			    System.out.println("ActualOutput[2][0] "+ BP.actualOutput[2][0]);
-			    System.out.println("ActualOutput[3][0] "+ BP.actualOutput[3][0]);
-		        */
-			    BP.runBP();
-			    System.out.println("totalError" + BP.totalError);
+			    BP.trainNeuralNetwork();
+			    //System.out.println("totalError" + BP.totalError);
 			    
 			}
 
