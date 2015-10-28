@@ -100,11 +100,8 @@ public class ErrorBackPropagation {
 				{
 					layer[0].unitVec[j].output = layer[0].inputVec[j];
 					layer[0].outputVec[j]=layer[0].inputVec[j];
-					//System.out.println("layer[0]inputvec midddle " +j+" "+layer[0].inputVec[j]);
 				}
 				
-				//System.out.println("+++++++0");
-				//
 				
 				for(int i=0; i< numberOfLayers-1; i++)
 				{
@@ -113,22 +110,9 @@ public class ErrorBackPropagation {
 						layer[i+1].inputVec[j] = layer[i].outputVec[j];
 					}
 					
-					System.out.println("+++++++"+i);
 					layer[i+1].feedForward();
-					
+	
 				}
-				
-				
-				/*System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weight[0]);
-				System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weight[1]);
-				System.out.printf("layer[1].unitVec[1].weight[0]: %f \n",layer[1].unitVec[1].weight[0]);
-				System.out.printf("layer[1].unitVec[1].weight[1]: %f \n",layer[1].unitVec[1].weight[1]);
-				System.out.printf("layer[1].unitVec[2].weight[0]: %f \n",layer[1].unitVec[2].weight[0]);
-				System.out.printf("layer[1].unitVec[2].weight[1]: %f \n",layer[1].unitVec[2].weight[1]);
-				System.out.printf("layer[1].unitVec[3].weight[0]: %f \n",layer[1].unitVec[3].weight[0]);
-				System.out.printf("layer[1].unitVec[3].weight[1]: %f \n",layer[1].unitVec[3].weight[1]);
-				*/
-				
 			} 
 			
 			//update the weights 
@@ -146,14 +130,7 @@ public class ErrorBackPropagation {
 				double sum;
 				
 				int outputLayer = numberOfLayers - 1;
-				//System.out.println("outputLayer "+outputLayer);
-//				for(int i=0; i<numberOfTrainingSets; i++)
-//	   			{
-//	   				for(int j=0; j< layer[numberOfLayers-1].unitVec.length; j++)
-//	   				{
-//	   					System.out.printf("Expected output only: %f\n",expectedOutput[i][j]);
-//	   				}
-//	   			}
+
 				//calculate output signal error
 				for(int i=0; i<layer[outputLayer].unitVec.length; i++)
 				{
@@ -195,13 +172,13 @@ public class ErrorBackPropagation {
 						{
 							//System.out.printf("layer[%d].unitVec[%d].weight[%d]%f before update\n",i,j,k,layer[i].unitVec[j].weight[k]);
 							this.layer[i].unitVec[j].weightDiff[k] = momentum*layer[i].unitVec[j].weightDiff[k]+learningRate*layer[i].unitVec[j].signalError*layer[i-1].unitVec[k].output;
-							System.out.printf("layer[%d].unitVec[%d].output%f before update\n",i,j,layer[i-1].unitVec[k].output);
+						
+							//System.out.printf("layer[%d].unitVec[%d].output%f before update\n",i,j,layer[i-1].unitVec[k].output);
 							this.layer[i].unitVec[j].weight[k]=layer[i].unitVec[j].weight[k]+layer[i].unitVec[j].weightDiff[k];
 							//System.out.printf("layer[%d].unitVec[%d].weight[%d]%f after update111\n",i,j,k,layer[1].unitVec[0].weight[0]);
 							
 						}
 						
-						//System.out.printf("layer[1].unitVec[0].weight[0]: %f middle after\n",this.layer[1].unitVec[0].weight[0]);
 						
 						// Calculate Bias difference 
 						layer[i].biasWeightDiff 
@@ -231,25 +208,18 @@ public class ErrorBackPropagation {
 			{
 				long iter;
 				
-				for(iter=0; iter<1; iter++)
+				for(iter=0; iter<100; iter++)
 				{//Assign training set input to the trainingInput
 					for(int trainingsetNum=0; trainingsetNum<numberOfTrainingSets; trainingsetNum++)
 					{
 						for(int i=0; i<layer[0].unitVec.length; i++)
 						{
 							layer[0].inputVec[i]=trainingInput[trainingsetNum][i];
-							System.out.println("layer[0]inputvec " +i+" "+layer[0].inputVec[i]);
+							//System.out.println("layer[0]inputvec " +i+" "+layer[0].inputVec[i]);
 						}
 	   			
 						feedForwardPropagation();
 						
-						
-						//System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weight[0]);
-						//System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weight[1]);
-						//System.out.printf("layer[1].unitVec[0].weight[0]: %f \n",layer[1].unitVec[0].weightDiff[0]);
-						//System.out.printf("layer[1].unitVec[0].weight[1]: %f \n",layer[1].unitVec[0].weightDiff[1]);
-						
-					
 						
 	   			       
 						//Assign calculated output vector from neural network to actualOutput
@@ -270,7 +240,6 @@ public class ErrorBackPropagation {
 					System.out.println("totalError is "+totalError);
 									
 				//System.out.println("When we have reached the minError, the iteration is " + iter);
-				
 			}
 		}
 			
@@ -286,7 +255,7 @@ public class ErrorBackPropagation {
 				int numOfUnitsInEachLayer[]= {2,4,1};
 				
 				//XOR training input
-				double totalTrainingInput[][] = { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } };
+				double totalTrainingInput[][] = { { 1, 1 }, { 0, 1 }, { 1, 0 }, { 0, 0 } };
 				
 				//XOR training output
 				double outputTrainingSets[][] ={{0},{1},{1},{0}};
@@ -307,6 +276,4 @@ public class ErrorBackPropagation {
 			}
 
 }
-
-
 
