@@ -41,7 +41,7 @@ public class Layer {
     public double valueVec[]; 
     
 	//unit bias
-    public double bias;
+    public double bias=1.0;
     
     //unit bias weight
     public double biasWeight;
